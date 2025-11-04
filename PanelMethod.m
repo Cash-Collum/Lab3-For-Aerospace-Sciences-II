@@ -2,34 +2,44 @@ clc;
 clear;
 close all;
 
-c = 10;
-t = 3;
-x = linspace(0,c,c+1);
+c = 40;
+x = linspace(1,c,c);
 
-m = 4/100;
-p = 4/10;
-t = 15/100;
+%Naca 0018
+m = 2/100;
+p = 2/10;
+t = 18/100;
 
-dyc = 0;
+yc = zeros(1,length(x));
+dyc = zeros(1,length(x));
+xi = zeros(1,length(x));
 
 yt = (t/0.2)*c*(0.2969*sqrt(x/c) - 0.1260*(x/c) - 0.3516*(x/c).^2 + 0.2843*(x/c).^3 - 0.1036*(x/c).^4);
 
+for x = linspace(1,c,c)
 if x < p*c
-    yc = m*(x/p^2)*(2*p - x/c);
-    dyc = ((2*m)/p) - ((2*m*x)/p^2);
+    yc(x) = m.*(x./p.^2)*(2.*p - x./c);
+    dyc(x) = ((2*m)/p) - ((2*m*x)/(c*p^2));
 elseif x >= p*c
-    yc = m*((c - x)/(1 - p)^2)*(1 + x/c - 2*p);
-    dyc = (2*p*m)/(1-p^2);
+    yc(x) = m*((c - x)/(1 - p)^2).*(1 + x/c - 2*p);
+    dyc(x) = (2*p*m)/(1-p^2);
 end
 
+xi(x) = atan(dyc(x));
+end
 
-xi = atan(dyc);
+x = linspace(1,c,c);
 
-xU = x - yt*sin(xi);
-xL = x + yt*sin(xi);
+xU = x - yt.*sin(xi);
+xL = x + yt.*sin(xi);
 
-yU = yc + yt*cos(xi);
-yL = yc - yt*cos(xi);
+yU = yc + yt.*cos(xi);
+yL = yc - yt.*cos(xi);
+
+xU(1) = 0;
+xL(1) = 0;
+yU(1) = 0;
+yL(1) = 0;
 
 plot(xU,yU, 'b', lineWidth=1.5); hold on;
 plot(xL,yL, 'r', lineWidth=1.5);
