@@ -47,6 +47,7 @@ xlabel("Chord");
 num_str = sprintf('%04d', num);
 title("NACA " + num_str + " Airfoil");
 legend("Airfoil Shape", "Camber Line");
+axis equal;
 grid on;
 
 end
