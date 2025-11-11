@@ -1,22 +1,33 @@
+% Purpose: using NACA Airfoil Number, identify x and y coordinates of
+% boundary conditions for given airfoil
 
-function [x_b, y_b] = airGen(num, c)
+% Inputs: NACA Code (num), Chord length (c), Number of Panels (panels)
+% Outputs: X-Boundary Coordinates (x_b), Y-Boundary Coordinates (y_b)
 
-m = floor(num/1000) / 100;
+function [x_b, y_b] = airGen(num, c, panels)
+
+m = floor(num/1000) / 100; 
 p = mod(floor(num/100), 10) / 10;
 t = mod(num, 100) / 100;
 
-x = linspace(0,c,100);
+theta = linspace(0,pi,panels); % array for finding x-values
 
+x = c/2 + (cos(theta) * c/2); % array of x values along chord 
+
+% thickness distribution of airfoil
 yt = (t/0.2)*c*(0.2969*sqrt(x/c) - 0.1260*(x/c) - 0.3516*(x/c).^2 + 0.2843*(x/c).^3 - 0.1036*(x/c).^4);
 
+% allocating arrays
 dyc = zeros(1, length(x));
 yc = zeros(1, length(x));
 xi = zeros(1, length(x));
 
+% check to determine if airfoil has camber
 if p~=0 && m~=0
 
 for i = 1:length(x)
 
+% calculating mean camber line
 if x(i) < p*c
     yc(i) = m*(x(i)/p^2)*(2*p - x(i)/c);
     dyc(i) = ((2*m)/p) - ((2*m*x(i))/c*p^2);
@@ -25,24 +36,32 @@ elseif x(i) >= p*c
     dyc(i) = (2*p*m)/(1-p^2);
 end
 
+% local angle
 xi(i) = atan(dyc(i));
 
 end
 end
 
+% x-coordinates for upper and lower boundary points
 xU = x - yt.*sin(xi);
 xL = x + yt.*sin(xi);
+xL(end) = [];
 
+% y-coordinates for upper and lower boundary points
 yU = yc + yt.*cos(xi);
 yL = yc - yt.*cos(xi);
+yL(end) = [];
 
-x_b = [fliplr(xL) xU];
-y_b = [fliplr(yL) yU];
 
+x_b = [xL fliplr(xU)]; % x-array of boundary points
+y_b = [yL fliplr(yU)]; % y-array of boundary points
+
+
+% plotting
 figure;
 plot(x_b, y_b, lineWidth = 1.2);
 hold on
-plot(x,yc, LineWidth = 1.2);
+plot(x,yc, '--', LineWidth = 1.2);
 xlabel("Chord"); 
 num_str = sprintf('%04d', num);
 title("NACA " + num_str + " Airfoil");
