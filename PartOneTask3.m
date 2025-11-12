@@ -75,3 +75,8 @@ legend('0012', '2412', '4412');
 title('C_L vs. Alpha for change in camber');
 print('Task3', '-dpng','-r300');
 plot(alpha,ze);
+
+
+
+
+[a1] = thinFoilAlphaL0(4412,10,100);
