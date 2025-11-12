@@ -5,35 +5,73 @@ close all;
 [xb1,yb1] = airGen(0006,10,10);
 [xb2,yb2] = airGen(0012,10,10);
 [xb3,yb3] = airGen(0018,10,10);
+close all;
 
+N = 11;
 
-Cl1 = zeros(1,21);
-Cl2 = zeros(1,21);
-Cl3 = zeros(1,21);
+Cl1 = zeros(1,N);
+Cl2 = zeros(1,N);
+Cl3 = zeros(1,N);
 
-for alpha = linspace(-10,10,21)
+for alpha = linspace(-5,5,N)
 
-[Cl1(alpha+11)] = Vortex_Panel(xb1,yb1,alpha);
-[Cl2(alpha+11)] = Vortex_Panel(xb2,yb3,alpha);
-[Cl3(alpha+11)] = Vortex_Panel(xb3,yb3,alpha);
+[Cl1(alpha+((N+1)/2))] = Vortex_Panel(xb1,yb1,alpha);
+[Cl2(alpha+((N+1)/2))] = Vortex_Panel(xb2,yb2,alpha);
+[Cl3(alpha+((N+1)/2))] = Vortex_Panel(xb3,yb3,alpha);
 
 end
 
 
-alpha = linspace(-10,10,21);
+alpha = linspace(-5,5,N);
+ze = zeros(1,length(alpha));
 
 figure();
-subplot(2,2,1);
-plot(Cl1, alpha);
+plot(alpha, Cl1,'g');
+hold on;
+plot(alpha, Cl2 ,'b');
+plot(alpha, Cl3 ,'r');
+plot(alpha,ze);
+ylabel('Coefficient of Lift');
+xlabel('Alpha');
+legend('0006', '0012', '0018');
+title('C_L vs. Alpha for change in thickness');
+print('Task2', '-dpng','-r300');
 
-subplot(2,2,2);
-plot(Cl2, alpha);
 
-subplot(2,2,3);
-plot(Cl3, alpha);
 
-subplot(2,2,4);
-plot(Cl1, alpha);
-plot(Cl2, alpha);
-plot(Cl3, alpha);
 
+
+%% Task 3
+
+[xb1,yb1] = airGen(0012,10,10);
+[xb2,yb2] = airGen(2412,10,10);
+[xb3,yb3] = airGen(4412,10,10);
+
+N = 41;
+
+Cl1 = zeros(1,N);
+Cl2 = zeros(1,N);
+Cl3 = zeros(1,N);
+
+for alpha = linspace(-20,20,N)
+
+[Cl1(alpha+((N+1)/2))] = Vortex_Panel(xb1,yb1,alpha);
+[Cl2(alpha+((N+1)/2))] = Vortex_Panel(xb2,yb2,alpha);
+[Cl3(alpha+((N+1)/2))] = Vortex_Panel(xb3,yb3,alpha);
+
+end
+
+
+alpha = linspace(-20,20,N);
+ze = zeros(1,length(alpha));
+
+figure();
+plot(alpha, Cl1,'g'); hold on;
+plot(alpha, Cl2 ,'b');
+plot(alpha, Cl3 ,'r');
+ylabel('Coefficient of Lift');
+xlabel('Alpha');
+legend('0012', '2412', '4412');
+title('C_L vs. Alpha for change in camber');
+print('Task3', '-dpng','-r300');
+plot(alpha,ze);
