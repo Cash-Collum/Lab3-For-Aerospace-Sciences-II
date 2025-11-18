@@ -1,6 +1,6 @@
 function [e,c_L,c_Di] = PLLT(b,a0_t,a0_r,c_t,c_r,aero_t,aero_r,geo_t,geo_r,N)
 
-span = b;
+close all;
 a0t = a0_t; %lift slope at tip
 a0r = a0_r; %lift slope at root
 ct = c_t; %chord at the tip
@@ -36,9 +36,15 @@ end
 
 A = rhs\LHS;
 
-AR = s/c;
-c_L = A(1) * pi * AR
+AR = b/c;
+c_L = A(1) * pi * AR;
 
+for u = 2:N
+    step = step + (u * (A(u)/A(1)));
+end
 
+c_Di = ((c_L)^2 / (pi*AR)) * (1 + step);
+
+e = ((c_L)^2 / (pi*AR * c_Di));
 
 

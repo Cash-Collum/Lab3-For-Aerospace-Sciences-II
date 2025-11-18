@@ -1,14 +1,14 @@
-function [e,c_L,c_Di] = PLLT(b,a0_t,a0_r,c_t,c_r,aero_t,aero_r,geo_t,geo_r,N)
-
-span = b;
-a0t = a0_t; %lift slope at tip
-a0r = a0_r; %lift slope at root
-ct = c_t; %chord at the tip
-cr = c_r; %chord at the root
-aerot = aero_t; %zero lift slope at tip
-aeror = aero_r; %zero lift slope at root
-geot = geo_t; %Angle of attack at tip
-geor = geo_r; %Angle of attack at root
+%function [e,c_L,c_Di] = PLLT(b,a0_t,a0_r,c_t,c_r,aero_t,aero_r,geo_t,geo_r,N)
+N = 5;
+b = 100;
+a0t = 2*pi; %lift slope at tip
+a0r = 2*pi; %lift slope at root
+ct = 10; %chord at the tip
+cr = 10; %chord at the root
+aerot = 0; %zero lift slope at tip
+aeror = 0; %zero lift slope at root
+geot = 5*pi/180; %Angle of attack at tip
+geor = 5*pi/180; %Angle of attack at root
 
 theta = zeros(size(N));
 
@@ -20,18 +20,32 @@ a0 = linspace(a0t,a0r,N);
 aero = linspace(aerot,aeror,N);
 geo = linspace(geot,geor,N);
 
-for j = 1:N
-      summ = A(2*j - 1) * sin((2j-1)* theta);
+
+A = zeros(2*N-1,1);
+rhs = zeros(N,1);
+LHS = zeros(N,2*N-1);
+
+for i = 1:N
+    for j = 1:N
+        term1 = (4*b./(a0(i)*c(i))) * sin((2*j-1)*theta(i));
+        term2 = (2*j-1) * sin((2*j-1)*theta(i)) ./ sin(theta(i));
+        LHS(i,2*j-1) = term1 + term2;
+    end
+    rhs(i) = geo(i) - aero(i);
 end
 
-circulation = V*b*2 .* summ;
+A = rhs\LHS;
 
-alpha1 = ((4*b)/ (a0 * c));
+AR = b./c;
+c_L = A(1) * pi * AR
 
-for k = 1:N
-    alpha2 = A(k) * sin(k*theta(k));
-    alpha3 = k * A(k) * (sin(k*theta(k)) / sin(theta(k)));
+step1 = 0;
+for u = 2:N
+    step1 = step1 + (u * (A(u)/A(1)));
 end
 
+c_Di = ((c_L).^2 / (pi*AR)) * (1 + step1)
+
+e = ((c_L).^2 / (pi*AR * c_Di))
 
 
