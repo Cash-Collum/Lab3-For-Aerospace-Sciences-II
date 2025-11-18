@@ -3,7 +3,7 @@ N = 5;
 b = 100;
 a0t = 2*pi; %lift slope at tip
 a0r = 2*pi; %lift slope at root
-ct = 10; %chord at the tip
+ct = 8; %chord at the tip
 cr = 10; %chord at the root
 aerot = 0; %zero lift slope at tip
 aeror = 0; %zero lift slope at root
@@ -21,31 +21,32 @@ aero = linspace(aerot,aeror,N);
 geo = linspace(geot,geor,N);
 
 
-A = zeros(2*N-1,1);
+A = zeros(N,1);
 rhs = zeros(N,1);
-LHS = zeros(N,2*N-1);
+LHS = zeros(N,N);
 
 for i = 1:N
     for j = 1:N
-        term1 = (4*b./(a0(i)*c(i))) * sin((2*j-1)*theta(i));
+        term1 = (4*b./(a0(j)*c(i))) * sin((2*j-1)*theta(i));
         term2 = (2*j-1) * sin((2*j-1)*theta(i)) ./ sin(theta(i));
-        LHS(i,2*j-1) = term1 + term2;
+        LHS(i,j) = term1 + term2;
     end
     rhs(i) = geo(i) - aero(i);
 end
 
 A = LHS\rhs;
 
-AR = b./c;
+cM = mean(c);
+AR = b/(cM);
 c_L = A(1) * pi * AR
 
 step1 = 0;
 for u = 2:N
-    step1 = step1 + u * ((A(u)/A(1))).^2;
+    step1 = step1 + ((2*u-1) * ((A(u)/A(1))).^2);
 end
 
 c_Di = ((c_L).^2 / (pi*AR)) * (1 + step1)
 
-e = ((c_L).^2 / (pi*AR * c_Di))
+e = 1/(1+step1)
 
 
