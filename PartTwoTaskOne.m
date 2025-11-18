@@ -34,14 +34,14 @@ for i = 1:N
     rhs(i) = geo(i) - aero(i);
 end
 
-A = rhs\LHS;
+A = LHS\rhs;
 
 AR = b./c;
 c_L = A(1) * pi * AR
 
 step1 = 0;
 for u = 2:N
-    step1 = step1 + (u * (A(u)/A(1)));
+    step1 = step1 + u * ((A(u)/A(1))).^2;
 end
 
 c_Di = ((c_L).^2 / (pi*AR)) * (1 + step1)
