@@ -5,11 +5,11 @@ S = b * 0.5 * (c_root + c_tip);
 
 
 c1 = @(y) c_root - ((c_root - c_tip)/0.5*b)*y;
-integrand1 = @(y) cd(y) * c1(y);
+integrand1 = @(y) cd * c1(y);
 
 
 c2 = @(y) c_root + ((c_root - c_tip)/0.5*b)*y;
-integrand2 = @(y) cd(y) * c2(y);
+integrand2 = @(y) cd * c2(y);
 
 CD_01 = integral(integrand1, b1, 0);
 CD_02 = integral(integrand2, 0, b2);
