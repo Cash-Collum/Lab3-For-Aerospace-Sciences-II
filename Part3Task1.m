@@ -27,4 +27,4 @@ scatter(ALPHA,c_l);
 xlabel("ALPHA(degrees)");
 ylabel("C_L");
 title("Alpha Vs Coefficient of Lift for Cesna");
-saveas(gcf,"C_lvsALpha", 'pdf');
+saveas(gcf,"C_lvsALpha", 'png');
