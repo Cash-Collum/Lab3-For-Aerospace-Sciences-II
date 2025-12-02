@@ -1,5 +1,5 @@
 %% Code to calculate sectional drag coefficient
-N = 20;
+N = 16;
 cl_exp = [-0.8 -0.4 0 0.4 0.8];
 cd_exp = [0.018 0.011 0.01 0.0115 0.018];
 
