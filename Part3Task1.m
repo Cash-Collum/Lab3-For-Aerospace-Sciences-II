@@ -30,7 +30,7 @@ scatter(ALPHA,c_l);
 xlabel("ALPHA(degrees)");
 ylabel("C_L");
 title("Alpha Vs Coefficient of Lift for Cesna");
-%saveas(gcf,"C_lvsALpha", 'png');
+saveas(gcf,"C_lvsALpha", 'png');
 
 
 cd = .01; %All values were within 5% of this value. Integral code does not work with matrix
@@ -44,18 +44,29 @@ scatter(ALPHA,c_D);
 xlabel("ALPHA(degrees)");
 ylabel("C_D");
 title("Alpha Vs Coefficient of Drag for Cesna");
+saveas(gcf,"C_lvsALpha", 'png');
 
+c_D = c_di + c_d0;
 W = 2500;
-roALT = 17.56;
-roSL = 27.45;
-Thrust = W ./ ( c_l ./ c_D );
+roALT = .001756;
+roSL = .002377;
+S = 160.434;
+valid_idx = c_l > 0;  % Have to take all positive values of c_L or VSLUF wont be calculated
+c_l_valid = c_l(valid_idx);
+c_D_valid = c_D(valid_idx);
+ALPHA_valid = ALPHA(valid_idx);
 
-ThrustTrue = Thrust .* (roALT / roSL);
+VSLUF = sqrt(2 * W ./ (roALT * S .* c_l_valid));
+ThrustReq = 0.5 * roALT * VSLUF.^2 .* S .* c_D_valid;
+
+[T_min, idx_min] = min(ThrustReq);
+V_min = VSLUF(idx_min);
+
 figure()
-plot(ALPHA, ThrustTrue); hold on; grid on;
-yline(W);
-xlabel("ALPHA(degrees)");
-ylabel("True Thrust [lbf]");
-title("Alpha Vs Thrust for Cesna");
-xlim([-5 10])
-
+plot(VSLUF, ThrustReq); hold on; grid on;
+scatter(V_min, T_min, 10, 'r', 'filled');
+xlabel('Velocity (ft/s)');
+ylabel('Thrust Required (lbf)');
+title('Thrust Required vs Velocity(wing only)');
+text(V_min+200, T_min, sprintf('T =%.1f lbf\nV=%.1f ft/s',T_min,V_min));
+saveas(gcf,"C_lvsALpha", 'png');
